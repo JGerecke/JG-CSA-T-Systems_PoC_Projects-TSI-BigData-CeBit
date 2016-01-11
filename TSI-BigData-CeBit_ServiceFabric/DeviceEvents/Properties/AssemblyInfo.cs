@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("DeviceEvents")]
+[assembly: AssemblyTitle("TSI-BigData-CeBit ServiceFabric DeviceEvents")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("DeviceEvents")]
-[assembly: AssemblyCopyright("Copyright ©  2016")]
+[assembly: AssemblyCompany("Microsoft Deutschland GmbH")]
+[assembly: AssemblyProduct("TSI-BigData-CeBit ServiceFabric DeviceEvents")]
+[assembly: AssemblyCopyright("Copyright ©  2016 - Jens Gerecke - for Proof-of-Concept only!")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
