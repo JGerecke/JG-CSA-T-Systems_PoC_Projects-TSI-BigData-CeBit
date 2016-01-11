@@ -2,7 +2,7 @@
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Service Fabric Tools\Microsoft.VisualStudio.Azure.Fabric.ApplicationProject.props" />
   <PropertyGroup Label="Globals">
-    <ProjectGuid>c330b2b7-bfae-442b-881e-f5061ae86cc2</ProjectGuid>
+    <ProjectGuid>b083f1a1-fbf3-421c-a241-46ce94a54e2a</ProjectGuid>
     <ProjectVersion>0.11</ProjectVersion>
   </PropertyGroup>
   <ItemGroup>

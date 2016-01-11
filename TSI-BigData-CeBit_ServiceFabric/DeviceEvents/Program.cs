@@ -25,7 +25,7 @@ namespace DeviceEvents
 
                     ServiceEventSource.Current.ServiceTypeRegistered(Process.GetCurrentProcess().Id, typeof(DeviceEvents).Name);
 
-                    Thread.Sleep(Timeout.Infinite);  // Prevents this host process from terminating to keep the service host process running.
+                    Thread.Sleep(Timeout.Infinite);  // Prevents this host process from terminating so services keeps running.
                 }
             }
             catch (Exception e)

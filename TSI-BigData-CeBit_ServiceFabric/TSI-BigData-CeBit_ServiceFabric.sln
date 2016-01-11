@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{A07B5EB6-E848-4116-A8D0-A826331D98C6}") = "TSI_BigData_CeBit_ServiceFabric", "TSI-BigData-CeBit_ServiceFabric\TSI_BigData_CeBit_ServiceFabric.sfproj", "{C330B2B7-BFAE-442B-881E-F5061AE86CC2}"
+Project("{A07B5EB6-E848-4116-A8D0-A826331D98C6}") = "TSI_BigData_CeBit_ServiceFabric", "TSI-BigData-CeBit_ServiceFabric\TSI_BigData_CeBit_ServiceFabric.sfproj", "{B083F1A1-FBF3-421C-A241-46CE94A54E2A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeviceEvents", "DeviceEvents\DeviceEvents.csproj", "{5746E63E-61E1-408A-AE34-3AFCA1A9A3E1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeviceEvents", "DeviceEvents\DeviceEvents.csproj", "{5B73A85D-2A36-4136-8B32-BB9FDE28D9FF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,16 +13,16 @@ Global
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{C330B2B7-BFAE-442B-881E-F5061AE86CC2}.Debug|x64.ActiveCfg = Debug|x64
-		{C330B2B7-BFAE-442B-881E-F5061AE86CC2}.Debug|x64.Build.0 = Debug|x64
-		{C330B2B7-BFAE-442B-881E-F5061AE86CC2}.Debug|x64.Deploy.0 = Debug|x64
-		{C330B2B7-BFAE-442B-881E-F5061AE86CC2}.Release|x64.ActiveCfg = Release|x64
-		{C330B2B7-BFAE-442B-881E-F5061AE86CC2}.Release|x64.Build.0 = Release|x64
-		{C330B2B7-BFAE-442B-881E-F5061AE86CC2}.Release|x64.Deploy.0 = Release|x64
-		{5746E63E-61E1-408A-AE34-3AFCA1A9A3E1}.Debug|x64.ActiveCfg = Debug|x64
-		{5746E63E-61E1-408A-AE34-3AFCA1A9A3E1}.Debug|x64.Build.0 = Debug|x64
-		{5746E63E-61E1-408A-AE34-3AFCA1A9A3E1}.Release|x64.ActiveCfg = Release|x64
-		{5746E63E-61E1-408A-AE34-3AFCA1A9A3E1}.Release|x64.Build.0 = Release|x64
+		{B083F1A1-FBF3-421C-A241-46CE94A54E2A}.Debug|x64.ActiveCfg = Debug|x64
+		{B083F1A1-FBF3-421C-A241-46CE94A54E2A}.Debug|x64.Build.0 = Debug|x64
+		{B083F1A1-FBF3-421C-A241-46CE94A54E2A}.Debug|x64.Deploy.0 = Debug|x64
+		{B083F1A1-FBF3-421C-A241-46CE94A54E2A}.Release|x64.ActiveCfg = Release|x64
+		{B083F1A1-FBF3-421C-A241-46CE94A54E2A}.Release|x64.Build.0 = Release|x64
+		{B083F1A1-FBF3-421C-A241-46CE94A54E2A}.Release|x64.Deploy.0 = Release|x64
+		{5B73A85D-2A36-4136-8B32-BB9FDE28D9FF}.Debug|x64.ActiveCfg = Debug|x64
+		{5B73A85D-2A36-4136-8B32-BB9FDE28D9FF}.Debug|x64.Build.0 = Debug|x64
+		{5B73A85D-2A36-4136-8B32-BB9FDE28D9FF}.Release|x64.ActiveCfg = Release|x64
+		{5B73A85D-2A36-4136-8B32-BB9FDE28D9FF}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

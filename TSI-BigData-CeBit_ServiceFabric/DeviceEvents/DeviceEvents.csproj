@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
-    <ProjectGuid>{5746E63E-61E1-408A-AE34-3AFCA1A9A3E1}</ProjectGuid>
+    <ProjectGuid>{5B73A85D-2A36-4136-8B32-BB9FDE28D9FF}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>DeviceEvents</RootNamespace>
