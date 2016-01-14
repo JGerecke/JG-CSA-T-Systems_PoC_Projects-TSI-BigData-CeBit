@@ -18,6 +18,7 @@ namespace DeviceEvents
     /// <summary>
     /// The FabricRuntime creates an instance of this class for each service type instance. 
     /// </summary>
+
     internal sealed class DeviceEvents : StatelessService
     {
 
@@ -45,35 +46,31 @@ namespace DeviceEvents
         /// <param name="cancelServiceInstance">Canceled when Service Fabric terminates this instance.</param>
         protected override async Task RunAsync(CancellationToken cancelServiceInstance)
         {
-            // TODO: Replace the following sample code with your own logic.
+            // ServiceMassage Status
+            ServiceEventSource.Current.ServiceMessage(this, "Start FabricService - DeviceEvents Service");
 
-            int iterations = 0;
+            // Initializing Cumulocity Device Cloud Communication
+            List<ConnectResponse> connectResponse = new List<ConnectResponse>();
+            List<DisconnectResponse> disconnectResponse = new List<DisconnectResponse>();
+            Advice handshakeAdvise = new Advice();
+            // extended timeout to 9 min.
+            handshakeAdvise.timeout = 90000;
+            handshakeAdvise.interval = 0;
+            string[] connectionTypes = new string[1] { "long-polling" };
+            HandshakeRequest handshake = new HandshakeRequest();
+            handshake.channel = "/meta/handshake";
+            handshake.version = "1.0";
+            handshake.minimumVersion = "0.9";
+            handshake.supportedConnectionTypes = connectionTypes;
+            handshake.advice = handshakeAdvise;
+
             // This service instance continues processing until the instance is terminated.
             while (!cancelServiceInstance.IsCancellationRequested)
             {
-
-                // Log what the service is doing
-                ServiceEventSource.Current.ServiceMessage(this, "Working-{0}", iterations++);
-
+                ServiceEventSource.Current.ServiceMessage(this, "Start Cumulocity Communication");
                 // ======================================================================================
                 // Implementation of Cumulocity Device Cloud 
                 // ======================================================================================
-
-                //HttpStatusCode deviceCloudResult = HttpStatusCode.Created;
-                List<ConnectResponse> connectResponse = new List<ConnectResponse>();
-                List<DisconnectResponse> disconnectResponse = new List<DisconnectResponse>();
-
-                Advice handshakeAdvise = new Advice();
-                // extended timeout to 9 min.
-                handshakeAdvise.timeout = 90000;
-                handshakeAdvise.interval = 0;
-                string[] connectionTypes = new string[1] { "long-polling" };
-                HandshakeRequest handshake = new HandshakeRequest();
-                handshake.channel = "/meta/handshake";
-                handshake.version = "1.0";
-                handshake.minimumVersion = "0.9";
-                handshake.supportedConnectionTypes = connectionTypes;
-                handshake.advice = handshakeAdvise;
 
                 HandshakeResponse[] handshakeResponse = DeviceCloudHandshake(handshake, devicecloud_url);
                 handshake = null;
@@ -87,24 +84,33 @@ namespace DeviceEvents
                     subscribeRequest = null;
                     if (subscribeResponse[0].successful == true)
                     {
-                        //ConnectRequest connectRequest = new ConnectRequest();
-                        //connectRequest.clientId = handshakeResponse[0].clientId;
-                        //connectRequest.channel = "/meta/connect";
-                        //connectRequest.connectionType = "long-polling";
-                        //connectRequest.advice = handshakeAdvise;
+                        DateTime endTime = DateTime.Now.AddMinutes(10);
+                        bool connectionTimeOut = false;
+                        while (!connectionTimeOut)
+                        {
 
-                        //// call SendIoTEvents here
+                            //ConnectRequest connectRequest = new ConnectRequest();
+                            //connectRequest.clientId = handshakeResponse[0].clientId;
+                            //connectRequest.channel = "/meta/connect";
+                            //connectRequest.connectionType = "long-polling";
+                            //connectRequest.advice = handshakeAdvise;
 
-                        //connectRequest = null;
-                        //connectResponse = null;
+                            //// call SendIoTEvents here
 
-                        //DisconnectRequest disconnectRequest = new DisconnectRequest();
-                        //disconnectRequest.clientId = handshakeResponse[0].clientId;
-                        //disconnectRequest.channel = "/meta/disconnect";
-                        //disconnectResponse = DeviceCloudDisconnect(disconnectRequest, devicecloud_url);
-                        //disconnectRequest = null;
-                        //disconnectResponse = null;
+                            //connectRequest = null;
+                            //connectResponse = null;
 
+                            //DisconnectRequest disconnectRequest = new DisconnectRequest();
+                            //disconnectRequest.clientId = handshakeResponse[0].clientId;
+                            //disconnectRequest.channel = "/meta/disconnect";
+                            //disconnectResponse = DeviceCloudDisconnect(disconnectRequest, devicecloud_url);
+                            //disconnectRequest = null;
+                            //disconnectResponse = null;
+
+                            // ======================================================================================
+                            if (DateTime.Now <= endTime) connectionTimeOut = true;
+                            ServiceEventSource.Current.ServiceMessage(this, "Cumulocity communication - reached communicationTimeout 10 min.");
+                        }
                         UnsubscribeRequest unsubscribeRequest = new UnsubscribeRequest();
                         unsubscribeRequest.channel = "/meta/unsubscribe";
                         unsubscribeRequest.clientId = handshakeResponse[0].clientId;
@@ -115,27 +121,26 @@ namespace DeviceEvents
                     }
                     else
                     {
+                        ServiceEventSource.Current.ServiceMessage(this, "Cumulocity communication - subscribeResponse[0].succesfuls == false");
                         deviceCloudResult = HttpStatusCode.BadRequest;
                     }
                 }
                 else
                 {
+                    ServiceEventSource.Current.ServiceMessage(this, "Cumulocity communication - handshakeResponse[0].succesfuls == false");
                     deviceCloudResult = HttpStatusCode.BadRequest;
-
                 }
-                // ======================================================================================
-
                 // Pause for 1 second before continue processing.
                 await Task.Delay(TimeSpan.FromSeconds(1), cancelServiceInstance);
             }
         }
 
-    // ======================================================================================
-    // Implementation of Cumulocity Device Cloud 
-    // ======================================================================================
+        // ======================================================================================
+        // Implementation of Cumulocity Device Cloud 
+        // ======================================================================================
 
         // Cumulocity Handshake - Request - Response
-        private HandshakeResponse[] DeviceCloudHandshake(HandshakeRequest handshakeRequest, string service_url)
+        public HandshakeResponse[] DeviceCloudHandshake(HandshakeRequest handshakeRequest, string service_url)
         {
             HandshakeResponse[] handshakeResp = new HandshakeResponse[0];
             try
@@ -177,7 +182,7 @@ namespace DeviceEvents
         }
 
         // Cumulocity Subscribe - Request - Response
-        private SubscribeResponse[] DeviceCloudSubscribe(SubscribeRequest subscribeRequest, string service_url)
+        public SubscribeResponse[] DeviceCloudSubscribe(SubscribeRequest subscribeRequest, string service_url)
         {
             SubscribeResponse[] subscribeResp = new SubscribeResponse[0];
             try
@@ -221,7 +226,7 @@ namespace DeviceEvents
         }
 
         // Cumulocity Unsubscribe - Request - Response
-        private UnsubscribeResponse[] DeviceCloudUnsubscribe(UnsubscribeRequest unsubscribeRequest, string service_url)
+        public UnsubscribeResponse[] DeviceCloudUnsubscribe(UnsubscribeRequest unsubscribeRequest, string service_url)
         {
             List<UnsubscribeResponse> unsubscribeResp = new List<UnsubscribeResponse>();
             try
@@ -265,7 +270,7 @@ namespace DeviceEvents
         }
 
         // Cumulocity Connect - Request - Response
-        private List<ConnectResponse> DeviceCloudConnect(ConnectRequest connectRequest, string service_url)
+        public List<ConnectResponse> DeviceCloudConnect(ConnectRequest connectRequest, string service_url)
         {
             List<ConnectResponse> connectResp = new List<ConnectResponse>();
             try
@@ -309,7 +314,7 @@ namespace DeviceEvents
         }
 
         // Cumulocity Disconnect - Request - Response
-        private List<DisconnectResponse> DeviceCloudDisconnect(DisconnectRequest disconnectRequest, string service_url)
+        public List<DisconnectResponse> DeviceCloudDisconnect(DisconnectRequest disconnectRequest, string service_url)
         {
             List<DisconnectResponse> disconnectResp = new List<DisconnectResponse>();
             try
@@ -346,7 +351,7 @@ namespace DeviceEvents
         }
 
         //create HttpWebRequest
-        private HttpWebRequest deviceCloudHttpRequest(string service_url)
+        public HttpWebRequest deviceCloudHttpRequest(string service_url)
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(service_url);
             request.Method = "POST";
@@ -357,7 +362,7 @@ namespace DeviceEvents
         }
 
         //Send IoT Event-Messages into Azure EventHub
-        private void SendIoTEvents(ConnectResponse ioTEvent)
+        public void SendIoTEvents(ConnectResponse ioTEvent)
         {
             var eventHubClient = EventHubClient.CreateFromConnectionString(connectionString, eventHubName);
             try
@@ -449,6 +454,6 @@ namespace DeviceEvents
             }
             return;
         }
-    // ======================================================================================
+
     }
 }

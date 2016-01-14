@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("TSI-BigData-CeBit ServiceFabric DeviceEvents")]
+[assembly: AssemblyTitle("DeviceEvents")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Microsoft Deutschland GmbH")]
-[assembly: AssemblyProduct("TSI-BigData-CeBit ServiceFabric DeviceEvents")]
-[assembly: AssemblyCopyright("Copyright ©  2016 - Jens Gerecke - for Proof-of-Concept only!")]
+[assembly: AssemblyProduct("DeviceEvents")]
+[assembly: AssemblyCopyright("Copyright ©  2016 - Jens Gerecke - For Proof-of-Concepts only!")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("5b73a85d-2a36-4136-8b32-bb9fde28d9ff")]
+[assembly: Guid("8030a12f-ef47-4a90-ac1a-6303de24bc16")]
 
 // Version information for an assembly consists of the following four values:
 //
