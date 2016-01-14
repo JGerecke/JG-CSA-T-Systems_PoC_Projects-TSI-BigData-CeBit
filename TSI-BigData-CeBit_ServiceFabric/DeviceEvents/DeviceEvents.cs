@@ -88,6 +88,7 @@ namespace DeviceEvents
                         bool connectionTimeOut = false;
                         while (!connectionTimeOut)
                         {
+                            ServiceEventSource.Current.ServiceMessage(this, "Cumulocity communication - SendIoTEvents succeeded");
                             //ConnectRequest connectRequest = new ConnectRequest();
                             //connectRequest.clientId = handshakeResponse[0].clientId;
                             //connectRequest.channel = "/meta/connect";
@@ -107,9 +108,10 @@ namespace DeviceEvents
                             //disconnectResponse = null;
 
                             // ======================================================================================
-                            if (DateTime.Now <= endTime) connectionTimeOut = true;
-                            ServiceEventSource.Current.ServiceMessage(this, "Cumulocity communication - reached communicationTimeout 10 min.");
+                            if (DateTime.Now >= endTime) connectionTimeOut = true;
+                            ServiceEventSource.Current.ServiceMessage(this, "Cumulocity communication - SendIoTEvents succeeded");
                         }
+                        ServiceEventSource.Current.ServiceMessage(this, "Cumulocity communication - reached communicationTimeout 10 min.");
                         UnsubscribeRequest unsubscribeRequest = new UnsubscribeRequest();
                         unsubscribeRequest.channel = "/meta/unsubscribe";
                         unsubscribeRequest.clientId = handshakeResponse[0].clientId;
