@@ -88,7 +88,6 @@ namespace DeviceEvents
                         bool connectionTimeOut = false;
                         while (!connectionTimeOut)
                         {
-
                             //ConnectRequest connectRequest = new ConnectRequest();
                             //connectRequest.clientId = handshakeResponse[0].clientId;
                             //connectRequest.channel = "/meta/connect";
