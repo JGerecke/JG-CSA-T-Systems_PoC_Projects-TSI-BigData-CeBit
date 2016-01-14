@@ -163,7 +163,7 @@ namespace DeviceEvents
                         string responseJsonText = reader.ReadToEnd();
                         handshakeResp = js.Deserialize<HandshakeResponse[]>(responseJsonText);
                         // ==========================
-                        ServiceEventSource.Current.ServiceMessage(this, "Cumulocity habndshake established - {0}", handshakeResp[0].successful);
+                        ServiceEventSource.Current.ServiceMessage(this, "Cumulocity handshake established - {0}", handshakeResp[0].successful);
                         // ==========================
                         reader.Close();
                     }
