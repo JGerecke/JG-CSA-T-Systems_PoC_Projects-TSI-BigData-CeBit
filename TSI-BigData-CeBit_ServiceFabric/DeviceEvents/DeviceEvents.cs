@@ -84,33 +84,45 @@ namespace DeviceEvents
                     subscribeRequest = null;
                     if (subscribeResponse[0].successful == true)
                     {
+                        ConnectRequest connectRequest = new ConnectRequest();
+                        connectRequest.clientId = handshakeResponse[0].clientId;
+                        connectRequest.channel = "/meta/connect";
+                        connectRequest.connectionType = "long-polling";
+                        connectRequest.advice = handshakeAdvise;
+
+                        // ======================================================================================
                         DateTime endTime = DateTime.Now.AddMinutes(10);
                         bool connectionTimeOut = false;
                         while (!connectionTimeOut && !cancelServiceInstance.IsCancellationRequested)
                         {
                             ServiceEventSource.Current.ServiceMessage(this, "Cumulocity communication - SendIoTEvents startet - {0}", System.Convert.ToString(DateTime.Now));
-                            //ConnectRequest connectRequest = new ConnectRequest();
-                            //connectRequest.clientId = handshakeResponse[0].clientId;
-                            //connectRequest.channel = "/meta/connect";
-                            //connectRequest.connectionType = "long-polling";
-                            //connectRequest.advice = handshakeAdvise;
 
                             //// call SendIoTEvents here
+                            connectResponse = DeviceCloudConnect(connectRequest, devicecloud_url);
+                            connectResponse.ForEach(delegate (ConnectResponse singleResponse)
+                            {
+                                if (singleResponse.channel != "/meta/connect")
+                                {
+                                    SendIoTEvents(singleResponse);
+                                }
+                            });
+                            //Thread.Sleep(1000);
+                            await Task.Delay(TimeSpan.FromSeconds(1), cancelServiceInstance);
 
-                            //connectRequest = null;
-                            //connectResponse = null;
-
-                            //DisconnectRequest disconnectRequest = new DisconnectRequest();
-                            //disconnectRequest.clientId = handshakeResponse[0].clientId;
-                            //disconnectRequest.channel = "/meta/disconnect";
-                            //disconnectResponse = DeviceCloudDisconnect(disconnectRequest, devicecloud_url);
-                            //disconnectRequest = null;
-                            //disconnectResponse = null;
-
-                            // ======================================================================================
                             if (DateTime.Now >= endTime) connectionTimeOut = true;
-                            ServiceEventSource.Current.ServiceMessage(this, "Cumulocity communication - SendIoTEvents succeeded - {=}", System.Convert.ToString(DateTime.Now));
+                            ServiceEventSource.Current.ServiceMessage(this, "Cumulocity communication - SendIoTEvents succeeded - {0}", System.Convert.ToString(DateTime.Now));
                         }
+                        // ======================================================================================
+                        connectRequest = null;
+                        connectResponse = null;
+
+                        DisconnectRequest disconnectRequest = new DisconnectRequest();
+                        disconnectRequest.clientId = handshakeResponse[0].clientId;
+                        disconnectRequest.channel = "/meta/disconnect";
+                        disconnectResponse = DeviceCloudDisconnect(disconnectRequest, devicecloud_url);
+                        disconnectRequest = null;
+                        disconnectResponse = null;
+
                         ServiceEventSource.Current.ServiceMessage(this, "Cumulocity communication - reached communicationTimeout 10 min.");
                         UnsubscribeRequest unsubscribeRequest = new UnsubscribeRequest();
                         unsubscribeRequest.channel = "/meta/unsubscribe";
@@ -307,7 +319,8 @@ namespace DeviceEvents
             }
             catch (Exception e)
             {
-                System.Diagnostics.Trace.WriteLine("Exception caught" + System.Convert.ToString(e), "Error");
+                ServiceEventSource.Current.ServiceMessage(this, "Exception caught - {0} - unknown error during Connect request", System.Convert.ToString(e));
+                //System.Diagnostics.Trace.WriteLine("Exception caught" + System.Convert.ToString(e), "Error");
                 connectResp[0].successful = false;
                 connectResp[0].error = "Exeption - unknown error during Connect request";
             }
@@ -344,7 +357,8 @@ namespace DeviceEvents
             }
             catch (Exception e)
             {
-                System.Diagnostics.Trace.WriteLine("Exception caught" + System.Convert.ToString(e), "Error");
+                ServiceEventSource.Current.ServiceMessage(this, "Exception caught - {0} - unknown error during Disconnect request", System.Convert.ToString(e));
+                //System.Diagnostics.Trace.WriteLine("Exception caught" + System.Convert.ToString(e), "Error");
                 disconnectResp[0].successful = false;
                 disconnectResp[0].error = "Exeption - unknown error during Disconnect request";
             }
@@ -429,29 +443,35 @@ namespace DeviceEvents
                         DeviceEvent.event_measurement.Add("TemperatureIn_" + ioTEvent.data.data.certuss_Speisung.Speisewassertemperatur_Kesseleintritt.unit, ioTEvent.data.data.certuss_Speisung.Speisewassertemperatur_Kesseleintritt.value);
                         break;
                 }
-                DataContractJsonSerializer ser = new DataContractJsonSerializer(DeviceEvent.GetType());
-                ser.WriteObject(ms, DeviceEvent);
-                DeviceEvent = null;
-                ser = null;
-                String jsonIoTEvent = Encoding.UTF8.GetString(ms.ToArray());
-                if (jsonIoTEvent.Length != 0)
+                if (DeviceEvent.event_type != null)
                 {
-                    jsonIoTEvent = jsonIoTEvent.Replace("{\"event_measurement\":[", "{");
-                    jsonIoTEvent = jsonIoTEvent.Replace("{\"Key\":\"", "\"");
-                    jsonIoTEvent = jsonIoTEvent.Replace(",\"Value\":", ":");
-                    jsonIoTEvent = jsonIoTEvent.Replace("},", ",");
-                    jsonIoTEvent = jsonIoTEvent.Replace("}],", ",");
-                    jsonIoTEvent = jsonIoTEvent.Replace("l\\/min", "l/min");
+                    DataContractJsonSerializer ser = new DataContractJsonSerializer(DeviceEvent.GetType());
+                    ser.WriteObject(ms, DeviceEvent);
+                    ServiceEventSource.Current.ServiceMessage(this, "Send to EventHub - {0} - {1}", DeviceEvent.event_type, DeviceEvent.event_time);
+                    DeviceEvent = null;
+                    ser = null;
+                    String jsonIoTEvent = Encoding.UTF8.GetString(ms.ToArray());
+                    if (jsonIoTEvent.Length != 0)
+                    {
+                        jsonIoTEvent = jsonIoTEvent.Replace("{\"event_measurement\":[", "{");
+                        jsonIoTEvent = jsonIoTEvent.Replace("{\"Key\":\"", "\"");
+                        jsonIoTEvent = jsonIoTEvent.Replace(",\"Value\":", ":");
+                        jsonIoTEvent = jsonIoTEvent.Replace("},", ",");
+                        jsonIoTEvent = jsonIoTEvent.Replace("}],", ",");
+                        jsonIoTEvent = jsonIoTEvent.Replace("l\\/min", "l/min");
 
-                    eventHubClient.Send(new EventData(Encoding.UTF8.GetBytes(jsonIoTEvent)));
+                        eventHubClient.Send(new EventData(Encoding.UTF8.GetBytes(jsonIoTEvent)));
+
+                    }
+                    jsonIoTEvent = null;
                 }
                 eventHubClient.Close();
                 ms.Close();
-                jsonIoTEvent = null;
             }
             catch (Exception e)
             {
-                System.Diagnostics.Trace.WriteLine("Exception caught" + System.Convert.ToString(e), "Error");
+                ServiceEventSource.Current.ServiceMessage(this, "Exception caught - {0} - unknown error during Send DeviceEvent to EventHub", System.Convert.ToString(e));
+                //System.Diagnostics.Trace.WriteLine("Exception caught" + System.Convert.ToString(e), "Error");
             }
             return;
         }
