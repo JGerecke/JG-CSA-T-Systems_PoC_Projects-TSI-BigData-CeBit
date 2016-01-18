@@ -73,7 +73,6 @@ namespace DeviceEvents
                 // ======================================================================================
 
                 HandshakeResponse[] handshakeResponse = DeviceCloudHandshake(handshake, devicecloud_url);
-                handshake = null;
                 if (handshakeResponse[0].successful == true)
                 {
                     SubscribeRequest subscribeRequest = new SubscribeRequest();
@@ -112,6 +111,7 @@ namespace DeviceEvents
                             if (DateTime.Now >= endTime) connectionTimeOut = true;
                             ServiceEventSource.Current.ServiceMessage(this, "Cumulocity communication - SendIoTEvents succeeded - {0}", System.Convert.ToString(DateTime.Now));
                         }
+                        ServiceEventSource.Current.ServiceMessage(this, "Cumulocity communication - reached communicationTimeout 10 min.");
                         // ======================================================================================
                         connectRequest = null;
                         connectResponse = null;
@@ -123,7 +123,6 @@ namespace DeviceEvents
                         disconnectRequest = null;
                         disconnectResponse = null;
 
-                        ServiceEventSource.Current.ServiceMessage(this, "Cumulocity communication - reached communicationTimeout 10 min.");
                         UnsubscribeRequest unsubscribeRequest = new UnsubscribeRequest();
                         unsubscribeRequest.channel = "/meta/unsubscribe";
                         unsubscribeRequest.clientId = handshakeResponse[0].clientId;
@@ -134,18 +133,19 @@ namespace DeviceEvents
                     }
                     else
                     {
-                        ServiceEventSource.Current.ServiceMessage(this, "Cumulocity communication - subscribeResponse[0].succesfuls == false");
+                        ServiceEventSource.Current.ServiceMessage(this, "Cumulocity communication - subscribeResponse[0].succesfull == false");
                         deviceCloudResult = HttpStatusCode.BadRequest;
                     }
                 }
                 else
                 {
-                    ServiceEventSource.Current.ServiceMessage(this, "Cumulocity communication - handshakeResponse[0].succesfuls == false");
+                    ServiceEventSource.Current.ServiceMessage(this, "Cumulocity communication - handshakeResponse[0].succesfull == false");
                     deviceCloudResult = HttpStatusCode.BadRequest;
                 }
                 // Pause for 1 second before continue processing.
                 await Task.Delay(TimeSpan.FromSeconds(1), cancelServiceInstance);
             }
+            handshake = null;
         }
 
         // ======================================================================================
