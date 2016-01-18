@@ -106,7 +106,7 @@ namespace DeviceEvents
                                 }
                             });
                             //Thread.Sleep(1000);
-                            await Task.Delay(TimeSpan.FromSeconds(1), cancelServiceInstance);
+                            await Task.Delay(TimeSpan.FromMilliseconds(200), cancelServiceInstance);
 
                             if (DateTime.Now >= endTime) connectionTimeOut = true;
                             ServiceEventSource.Current.ServiceMessage(this, "Cumulocity communication - SendIoTEvents succeeded - {0}", System.Convert.ToString(DateTime.Now));
